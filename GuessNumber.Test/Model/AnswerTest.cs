@@ -1,4 +1,5 @@
-﻿using GuessNumber.Exceptions;
+﻿using System.Collections.Generic;
+using GuessNumber.Exceptions;
 using GuessNumber.Model;
 using Xunit;
 
@@ -26,6 +27,15 @@ namespace GuessNumber.Test.Model
         public void Should_throw_exception_if_any_given_number_is_same()
         {
             Assert.Throws<DuplicatedAnswerException>(() => Answer.Of(1, 7, 2, 7));
+        }
+
+        [Fact]
+        public void Should_get_answer_if_all_number_is_correct()
+        {
+            var answer = Answer.Of(0, 1, 2, 3);
+
+            Assert.Equal(4, answer.Numbers.Count);
+            Assert.Equal(new List<int>{0, 1, 2, 3}, answer.Numbers);
         }
     }
 }
