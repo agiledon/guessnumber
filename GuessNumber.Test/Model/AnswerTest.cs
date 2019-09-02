@@ -21,5 +21,11 @@ namespace GuessNumber.Test.Model
 
             Assert.Throws<OutOfRangeException>(() => Answer.Of(0, 1, 2, 10));
         }
+
+        [Fact]
+        public void Should_throw_exception_if_any_given_number_is_same()
+        {
+            Assert.Throws<DuplicatedAnswerException>(() => Answer.Of(1, 7, 2, 7));
+        }
     }
 }

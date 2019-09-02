@@ -1,4 +1,7 @@
-﻿using GuessNumber.Exceptions;
+﻿using System.Collections.Generic;
+using System.Data;
+using System.Linq;
+using GuessNumber.Exceptions;
 
 namespace GuessNumber.Model
 {
@@ -12,6 +15,15 @@ namespace GuessNumber.Model
                 || NotInRange(value4))
             {
                 throw new OutOfRangeException();
+            }
+
+            var values = new List<int> {value1, value2, value3, value4};
+            foreach (var i in values)
+            {
+                if (values.Where(j => j >= i).Any(j => i == j))
+                {
+                    throw new DuplicatedAnswerException();
+                }
             }
         }
 
