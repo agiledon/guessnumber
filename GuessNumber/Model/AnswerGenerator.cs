@@ -5,6 +5,7 @@ namespace GuessNumber.Model
     public class AnswerGenerator
     {
         private readonly IRandomIntNumber _random;
+        private const int AnswerSize = 4;
 
         public AnswerGenerator(IRandomIntNumber random)
         {
@@ -13,20 +14,25 @@ namespace GuessNumber.Model
 
         public Answer Generate()
         {
-            IList<int> numbers = new List<int>(4);
-            var number = _random.Next();
-            numbers.Add(number);
+            IList<int> numbers = new List<int>(AnswerSize);
 
-            for (int i = 0; i < 3; i++)
+            for (var i = 0; i < AnswerSize; i++)
             {
-                int nextNumber;
-                do
-                {
-                    nextNumber = _random.Next();
-                } while (numbers.Contains(nextNumber) || NotInRange(nextNumber));
-                numbers.Add(nextNumber);
+                numbers.Add(GenerateUniqueCorrectNumber(numbers));
             }
+
             return Answer.Of(numbers);
+        }
+
+        private int GenerateUniqueCorrectNumber(IList<int> numbers)
+        {
+            int nextNumber;
+            do
+            {
+                nextNumber = _random.Next();
+            } while (numbers.Contains(nextNumber) || NotInRange(nextNumber));
+
+            return nextNumber;
         }
 
         private bool NotInRange(int number)

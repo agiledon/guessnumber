@@ -8,29 +8,28 @@ namespace GuessNumber.Model
 {
     public class Answer
     {
-        private int number1;
-        private int number2;
-        private int number3;
-        private int number4;
-        private IList<int> numbers;
+        private int _number1;
+        private int _number2;
+        private int _number3;
+        private int _number4;
 
-        public IList<int> Numbers => this.numbers;
+        public IList<int> Numbers { get; }
 
         private Answer(int number1, int number2, int number3, int number4)
         {
-            this.number1 = number1;
-            this.number2 = number2;
-            this.number3 = number3;
-            this.number4 = number4;
+            _number1 = number1;
+            _number2 = number2;
+            _number3 = number3;
+            _number4 = number4;
 
-            this.numbers = new List<int> {number1, number2, number3, number4};
+            Numbers = new List<int> {number1, number2, number3, number4};
+
+            Validate();
         }
 
         public static Answer Of(int value1, int value2, int value3, int value4)
         {
-            Answer answer = new Answer(value1, value2, value3, value4);
-            Validate(answer);
-            return answer;
+            return new Answer(value1, value2, value3, value4);
         }
 
         public static Answer Of(IList<int> numbers)
@@ -43,27 +42,26 @@ namespace GuessNumber.Model
             return Of(numbers[0], numbers[1], numbers[2], numbers[3]);
         }
 
-        private static void Validate(Answer answer)
+        private void Validate()
         {
-            ValidateRange(answer);
-            ValidateDuplication(answer);
+            ValidateRange();
+            ValidateDuplication();
         }
 
-        private static void ValidateDuplication(Answer answer)
+        private void ValidateDuplication()
         {
-            var nums = answer.numbers;
-            for (var i = 0; i < nums.Count; i++)
+            for (var i = 0; i < Numbers.Count; i++)
             {
-                if (nums.Where((t, j) => j > i).Any(t => nums[i] == t))
+                if (Numbers.Where((t, j) => j > i).Any(t => Numbers[i] == t))
                 {
                     throw new DuplicatedAnswerException();
                 }
             }
         }
 
-        private static void ValidateRange(Answer answer)
+        private void ValidateRange()
         {
-            if (answer.numbers.Any(value => value < 0 || value > 9))
+            if (Numbers.Any(value => value < 0 || value > 9))
             {
                 throw new OutOfRangeException();
             }
