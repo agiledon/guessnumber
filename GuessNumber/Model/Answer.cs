@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using GuessNumber.Exceptions;
@@ -30,6 +31,16 @@ namespace GuessNumber.Model
             Answer answer = new Answer(value1, value2, value3, value4);
             Validate(answer);
             return answer;
+        }
+
+        public static Answer Of(IList<int> numbers)
+        {
+            if (numbers.Count != 4)
+            {
+                throw new InvalidCountException();
+            }
+
+            return Of(numbers[0], numbers[1], numbers[2], numbers[3]);
         }
 
         private static void Validate(Answer answer)
