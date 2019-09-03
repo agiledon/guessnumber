@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using GuessNumber.Exceptions;
 using GuessNumber.Model;
 using Xunit;
@@ -14,8 +15,7 @@ namespace GuessNumber.Test.Model
 
             var exception = Record.Exception(() => Answer.Of(-1, 1, 2, 9));
 
-            Assert.IsType<InvalidAnswerException>(exception);
-            Assert.Equal("The number must be between 0 to 9.", exception.Message);
+            AssertAnswerException(exception, "The number must be between 0 to 9.");
         }
 
         [Fact]
@@ -23,8 +23,7 @@ namespace GuessNumber.Test.Model
         {
             var exception = Record.Exception(() => Answer.Of(0, 1, 2, 10));
 
-            Assert.IsType<InvalidAnswerException>(exception);
-            Assert.Equal("The number must be between 0 to 9.", exception.Message);
+            AssertAnswerException(exception, "The number must be between 0 to 9.");
         }
 
         [Fact]
@@ -46,6 +45,12 @@ namespace GuessNumber.Test.Model
         public void Should_throw_exeption_if_input_list_not_equal_to_4()
         {
             Assert.Throws<InvalidCountException>(() => Answer.Of(new List<int> {1, 2, 3, 4, 5}));
+        }
+
+        private static void AssertAnswerException(Exception exception, string message)
+        {
+            Assert.IsType<InvalidAnswerException>(exception);
+            Assert.Equal(message, exception.Message);
         }
     }
 }
