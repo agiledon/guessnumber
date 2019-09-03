@@ -37,5 +37,11 @@ namespace GuessNumber.Test.Model
             Assert.Equal(4, answer.Numbers.Count);
             Assert.Equal(new List<int>{0, 1, 2, 3}, answer.Numbers);
         }
+
+        [Fact]
+        public void Should_throw_exeption_if_input_list_not_equal_to_4()
+        {
+            Assert.Throws<InvalidCountException>(() => Answer.Of(new List<int> {1, 2, 3, 4, 5}));
+        }
     }
 }
