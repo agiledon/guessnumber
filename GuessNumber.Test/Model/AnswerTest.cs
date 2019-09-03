@@ -12,15 +12,19 @@ namespace GuessNumber.Test.Model
         {
             // 这里需要确认是在构造函数中抛出异常，还是提供validate()方法
 
-            Assert.Throws<OutOfRangeException>(() => Answer.Of(-1, 1, 2, 9));
+            var exception = Record.Exception(() => Answer.Of(-1, 1, 2, 9));
+
+            Assert.IsType<InvalidAnswerException>(exception);
+            Assert.Equal("The number must be between 0 to 9.", exception.Message);
         }
 
         [Fact]
         public void Should_throw_exception_if_given_number_is_greater_than_9()
         {
-            // 这里需要确认是在构造函数中抛出异常，还是提供validate()方法
+            var exception = Record.Exception(() => Answer.Of(0, 1, 2, 10));
 
-            Assert.Throws<OutOfRangeException>(() => Answer.Of(0, 1, 2, 10));
+            Assert.IsType<InvalidAnswerException>(exception);
+            Assert.Equal("The number must be between 0 to 9.", exception.Message);
         }
 
         [Fact]

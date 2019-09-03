@@ -127,3 +127,14 @@ TDD的过程中，要记得随时重构。
 
 这个重构做了部分手动工作，将原来的第4、5行的代码去掉了，然后将遍历的次数改为4。由于有测试保证，重构之后再运行一次测试，测试通过，就说明重构没有引入问题。
 
+
+当我们为`Answer`引入了新的工厂方法之后，我们发现为`Answer`的有效性验证定义了太多细粒度的异常。其实这些异常的差别仅在于异常信息的不同。故而都可以定义为`InvalidAnswerException`。
+
+在测试方法中，需要验证异常时，就不仅要验证异常的类型，还要验证异常的消息。xUnit提供了`Record.Exception(lambda)`方法，来记录异常。然后对返回的异常进行断言。这种方式其实更符合Given-When-Then或AAA Pattern。
+
+```cs
+            var exception = Record.Exception(() => Answer.Of(-1, 1, 2, 9));
+
+            Assert.IsType<InvalidAnswerException>(exception);
+            Assert.Equal("The number must be between 0 to 9.", exception.Message);
+```

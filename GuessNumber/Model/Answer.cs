@@ -63,7 +63,7 @@ namespace GuessNumber.Model
         {
             if (Numbers.Any(value => value < 0 || value > 9))
             {
-                throw new OutOfRangeException();
+                throw new InvalidAnswerException("The number must be between 0 to 9.");
             }
         }
     }
