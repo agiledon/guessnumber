@@ -29,7 +29,9 @@ namespace GuessNumber.Test.Model
         [Fact]
         public void Should_throw_exception_if_any_given_number_is_same()
         {
-            Assert.Throws<DuplicatedAnswerException>(() => Answer.Of(1, 7, 2, 7));
+            var exception = Record.Exception(() => Answer.Of(1, 7, 2, 7));
+
+            AssertAnswerException(exception, "The numbers of answer can not be duplicated.");
         }
 
         [Fact]
@@ -42,9 +44,11 @@ namespace GuessNumber.Test.Model
         }
 
         [Fact]
-        public void Should_throw_exeption_if_input_list_not_equal_to_4()
+        public void Should_throw_exception_if_input_list_not_equal_to_4()
         {
-            Assert.Throws<InvalidCountException>(() => Answer.Of(new List<int> {1, 2, 3, 4, 5}));
+            var exception = Record.Exception(() => Answer.Of(new List<int> {1, 2, 3, 4, 5}));
+
+            AssertAnswerException(exception, "The size of answer numbers must be 4.");
         }
 
         private static void AssertAnswerException(Exception exception, string message)

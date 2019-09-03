@@ -34,12 +34,17 @@ namespace GuessNumber.Model
 
         public static Answer Of(IList<int> numbers)
         {
-            if (numbers.Count != 4)
-            {
-                throw new InvalidCountException();
-            }
+            ValidateNumbersCount(numbers);
 
             return Of(numbers[0], numbers[1], numbers[2], numbers[3]);
+        }
+
+        private static void ValidateNumbersCount(IList<int> numbers)
+        {
+            if (numbers.Count != 4)
+            {
+                throw new InvalidAnswerException("The size of answer numbers must be 4.");
+            }
         }
 
         private void Validate()
@@ -54,7 +59,7 @@ namespace GuessNumber.Model
             {
                 if (Numbers.Where((t, j) => j > i).Any(t => Numbers[i] == t))
                 {
-                    throw new DuplicatedAnswerException();
+                    throw new InvalidAnswerException("The numbers of answer can not be duplicated.");
                 }
             }
         }
