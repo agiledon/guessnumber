@@ -8,9 +8,9 @@ namespace GuessNumber
         private readonly int _roundAmount;
         private readonly Round _round;
         private int _guessCount = 0;
-        private GuessResult _guessResult;
+        private readonly GuessResult _guessResult;
         private const string CorrectResult = "4A0B";
-        private Guess previousGuess;
+        private Guess _previousGuess;
 
         public Game(int roundAmount, AnswerGenerator answerGenerator)
         {
@@ -44,11 +44,11 @@ namespace GuessNumber
         {
             _guessResult.CurrentResult = result;
             _guessResult.GameResult = gameResult;
-            if (previousGuess != null)
+            if (_previousGuess != null)
             {
-                _guessResult.AddGuessHistory(previousGuess);
+                _guessResult.AddGuessHistory(_previousGuess);
             }
-            previousGuess = new Guess(inputAnswer, result);
+            _previousGuess = new Guess(inputAnswer, result);
         }
 
         private bool Lose(string result)

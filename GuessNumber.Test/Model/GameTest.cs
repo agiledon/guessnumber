@@ -7,54 +7,60 @@ namespace GuessNumber.Test.Model
 {
     public class GameTest
     {
+        private readonly Game _game = CreateGame();
+
         [Fact]
         public void Should_lose_if_all_3_times_are_wrong()
         {
-            var game = CreateGame();
-
             var inputAnswer1 = Answer.Of(1, 5, 6, 7);
+            var result = _game.Guess(inputAnswer1);
+            var history = new List<Guess>();
+            AssertGuessResult(result, "1A0B", GameResult.TBD, history);
+
             var inputAnswer2 = Answer.Of(2, 4, 7, 8);
+            result = _game.Guess(inputAnswer2);
+            history.Add(new Guess(inputAnswer1, "1A0B"));
+            AssertGuessResult(result, "0A2B", GameResult.TBD, history);
+
             var inputAnswer3 = Answer.Of(0, 3, 2, 4);
-
-            var result = game.Guess(inputAnswer1);
-            Assert.Equal("1A0B", result.CurrentResult);
-            Assert.Equal(GameResult.TBD, result.GameResult);
-            Assert.Equal(new List<Guess>(), result.GuessHistory);
-
-            result = game.Guess(inputAnswer2);
-            Assert.Equal("0A2B", result.CurrentResult);
-            Assert.Equal(GameResult.TBD, result.GameResult);
-            Assert.Equal(new List<Guess>() { new Guess(inputAnswer1, "1A0B") }, result.GuessHistory);
-            
-            result = game.Guess(inputAnswer3);
-            Assert.Equal("1A2B", result.CurrentResult);
-            Assert.Equal(GameResult.Lose, result.GameResult);
-            Assert.Equal(new List<Guess>() { new Guess(inputAnswer1, "1A0B"), new Guess(inputAnswer2, "0A2B") }, result.GuessHistory);
+            result = _game.Guess(inputAnswer3);
+            history.Add(new Guess(inputAnswer2, "0A2B"));
+            AssertGuessResult(result, "1A2B", GameResult.Lose, history);
         }
 
         [Fact]
         public void Should_win_if_first_time_is_right()
         {
-            var game = CreateGame();
+            var result = _game.Guess(Answer.Of(1, 2, 3, 4));
 
-            var result = game.Guess(Answer.Of(1, 2, 3, 4));
-
-            Assert.Equal(GameResult.Win, result.GameResult);
+            AssertGuessResult(result, "4A0B", GameResult.Win, new List<Guess>());
         }
 
         [Fact]
         public void Should_win_if_last_time_is_right()
         {
-            var game = CreateGame();
+            var inputAnswer1 = Answer.Of(1, 5, 6, 7);
+            var result = _game.Guess(inputAnswer1);
+            var history = new List<Guess>();
+            AssertGuessResult(result, "1A0B", GameResult.TBD, history);
 
-            var result = game.Guess(Answer.Of(1, 5, 6, 7));
-            Assert.Equal(GameResult.TBD, result.GameResult);
+            var inputAnswer2 = Answer.Of(2, 4, 7, 8);
+            result = _game.Guess(inputAnswer2);
+            history.Add(new Guess(inputAnswer1, "1A0B"));
+            AssertGuessResult(result, "0A2B", GameResult.TBD, history);
 
-            result = game.Guess(Answer.Of(2, 4, 7, 8));
-            Assert.Equal(GameResult.TBD, result.GameResult);
+            var inputAnswer3 = Answer.Of(1, 2, 3, 4);
+            result = _game.Guess(inputAnswer3);
+            history.Add(new Guess(inputAnswer2, "0A2B"));
+            AssertGuessResult(result, "4A0B", GameResult.Win, history);
+        }
 
-            result = game.Guess(Answer.Of(1, 2, 3, 4));
-            Assert.Equal(GameResult.Win, result.GameResult);
+        private static void AssertGuessResult(GuessResult result, string currentResult, GameResult gameResult,
+            List<Guess> history)
+        {
+            Assert.Equal(currentResult, result.CurrentResult);
+            Assert.Equal(gameResult, result.GameResult);
+            Assert.Equal(history, result.GuessHistory);
         }
 
         private static Game CreateGame()
