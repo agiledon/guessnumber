@@ -1,4 +1,5 @@
-﻿using GuessNumber.Model;
+﻿using System.Collections.Generic;
+using GuessNumber.Model;
 using Moq;
 using Xunit;
 
@@ -11,14 +12,24 @@ namespace GuessNumber.Test.Model
         {
             var game = CreateGame();
 
-            var result = game.Guess(Answer.Of(1, 5, 6, 7));
-            Assert.Equal(GameResult.TBD, result.GameResult);
+            var inputAnswer1 = Answer.Of(1, 5, 6, 7);
+            var inputAnswer2 = Answer.Of(2, 4, 7, 8);
+            var inputAnswer3 = Answer.Of(0, 3, 2, 4);
 
-            result = game.Guess(Answer.Of(2, 4, 7, 8));
+            var result = game.Guess(inputAnswer1);
+            Assert.Equal("1A0B", result.CurrentResult);
             Assert.Equal(GameResult.TBD, result.GameResult);
+            Assert.Equal(new List<Guess>(), result.GuessHistory);
 
-            result = game.Guess(Answer.Of(0, 3, 2, 4));
+            result = game.Guess(inputAnswer2);
+            Assert.Equal("0A2B", result.CurrentResult);
+            Assert.Equal(GameResult.TBD, result.GameResult);
+            Assert.Equal(new List<Guess>() { new Guess(inputAnswer1, "1A0B") }, result.GuessHistory);
+            
+            result = game.Guess(inputAnswer3);
+            Assert.Equal("1A2B", result.CurrentResult);
             Assert.Equal(GameResult.Lose, result.GameResult);
+            Assert.Equal(new List<Guess>() { new Guess(inputAnswer1, "1A0B"), new Guess(inputAnswer2, "0A2B") }, result.GuessHistory);
         }
 
         [Fact]

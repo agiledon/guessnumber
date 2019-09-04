@@ -105,5 +105,10 @@ namespace GuessNumber.Model
         {
             return Numbers.IndexOf(actualNumber) == inputAnswer.Numbers.IndexOf(inputNumber);
         }
+
+        public override string ToString()
+        {
+            return $"{_number1} {_number2} {_number3} {_number4}";
+        }
     }
 }

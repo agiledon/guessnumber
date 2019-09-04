@@ -10,6 +10,7 @@ namespace GuessNumber
         private int _guessCount = 0;
         private GuessResult _guessResult;
         private const string CorrectResult = "4A0B";
+        private Guess previousGuess;
 
         public Game(int roundAmount, AnswerGenerator answerGenerator)
         {
@@ -25,18 +26,29 @@ namespace GuessNumber
 
             if (Win(result))
             {
-                _guessResult.GameResult = GameResult.Win;
+                ComposeGuessResult(inputAnswer, result, GameResult.Win);
                 return _guessResult;
             }
 
             if (Lose(result))
             {
-                _guessResult.GameResult = GameResult.Lose;
+                ComposeGuessResult(inputAnswer, result, GameResult.Lose);
                 return _guessResult;
             }
 
-            _guessResult.GameResult = GameResult.TBD;
+            ComposeGuessResult(inputAnswer, result, GameResult.TBD);
             return _guessResult;
+        }
+
+        private void ComposeGuessResult(Answer inputAnswer, string result, GameResult gameResult)
+        {
+            _guessResult.CurrentResult = result;
+            _guessResult.GameResult = gameResult;
+            if (previousGuess != null)
+            {
+                _guessResult.AddGuessHistory(previousGuess);
+            }
+            previousGuess = new Guess(inputAnswer, result);
         }
 
         private bool Lose(string result)
