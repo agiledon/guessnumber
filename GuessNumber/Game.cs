@@ -6,16 +6,15 @@ namespace GuessNumber
     public class Game
     {
         private readonly int _roundAmount;
-        private Answer _actualAnswer;
-        private Round _round;
+        private readonly Round _round;
         private int _guessCount = 0;
         private GuessResult _guessResult;
+        private const string CorrectResult = "4A0B";
 
         public Game(int roundAmount, AnswerGenerator answerGenerator)
         {
             _roundAmount = roundAmount;
-            _actualAnswer = answerGenerator.Generate();
-            _round = new Round(_actualAnswer);
+            _round = new Round(answerGenerator.Generate());
             _guessResult = new GuessResult();
         }
 
@@ -24,23 +23,31 @@ namespace GuessNumber
             var result = _round.Guess(inputAnswer);
             _guessCount++;
 
-            if (result == "4A0B" && _guessCount <= _roundAmount)
+            if (Win(result))
             {
                 _guessResult.GameResult = GameResult.Win;
             }
+
+            if (Lose(result))
+            {
+                _guessResult.GameResult = GameResult.Lose;
+            }
             else
             {
-                if (_guessCount < _roundAmount)
-                {
-                    _guessResult.GameResult = GameResult.TBD;
-                }
-                else
-                {
-                    _guessResult.GameResult = GameResult.Lose;
-                }
+                _guessResult.GameResult = GameResult.TBD;
             }
 
             return _guessResult;
+        }
+
+        private bool Lose(string result)
+        {
+            return result != CorrectResult && _guessCount == _roundAmount;
+        }
+
+        private bool Win(string result)
+        {
+            return result == CorrectResult && _guessCount <= _roundAmount;
         }
     }
 }
