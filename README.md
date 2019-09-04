@@ -23,6 +23,8 @@
 
 ### 技术栈
 
-语言：C# (based on .NET Core 2.1)
-单元测试框架：xUnit
-模拟框架：Moq
+技术栈选择为：
+* 语言：C# (based on .NET Core 2.1)
+* 单元测试框架：xUnit
+* 模拟框架：Moq
+* 依赖注入框架：Autofac
