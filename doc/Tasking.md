@@ -29,7 +29,16 @@
 
 TDD的过程中，要记得随时重构。
 
+
 ## Step 2：选择第二个任务
+
+分解任务：
+* 随机生成答案
+* 判断每次猜测的结果
+* 检查输入是否合法
+* ~~检查答案的合法性~~
+* 记录并显示历史猜测数据
+* 判断游戏结果。判断猜测次数，如果满6次但是未猜对则判负；如果在6次内猜测的4个数字值与位置都正确，则判胜 
 
 在已经提供了Answer类之后，可以考虑选择“随机生成答案”这一任务。该任务需要具备生成一个满足条件的随机数。由于生成随机数是一个不可预知的功能，我们考虑用Moq。
 
@@ -138,3 +147,63 @@ TDD的过程中，要记得随时重构。
             Assert.IsType<InvalidAnswerException>(exception);
             Assert.Equal("The number must be between 0 to 9.", exception.Message);
 ```
+
+## Step 3: 选择第三个任务
+
+分解任务：
+* ~~随机生成答案~~
+* 判断每次猜测的结果
+* 检查输入是否合法
+* ~~检查答案的合法性~~
+* 记录并显示历史猜测数据
+* 判断游戏结果。判断猜测次数，如果满6次但是未猜对则判负；如果在6次内猜测的4个数字值与位置都正确，则判胜 
+
+从依赖顺序看，“判断每次猜测的结果”与“检查输入是否合法”没有依赖关系，后面两个任务与第二个任务存在依赖。考虑“检查输入是否合法”任务并非模型的核心，所以选择的第三个任务为：判断每次猜测的结果。
+
+首先思考该任务的职责承担者。站在测试调用者的角度看，是谁负责进行每次猜测呢？以下是一些候选：
+* Game
+* Player
+
+在面向对象设计中，我们要习惯于每个对象其实都有“智能意识”，而不仅限于代表人的对象角色。例如`Driver`确实具有开车的能力，但`Car`也有智能的自我运行的能力。这个和现实世界的对象是不同的。因此，游戏`Game`虽然是Player来玩的，但`Game`自身也应当有足够的智能。
+
+仔细分析当前任务，任务描述的“每次猜测”，站在游戏的角度来看，应该是指游戏的每一局。`Game`可以猜测多次，而每次就是一局`Round`。因此当前任务的模型对象应该是`Round`。故而应该定义`RoundTest`。
+
+编写测试用例是比较容易的。需求已经给出了多种情况。由于输入不正确的情况已经在`Answer`中做了验证，剩下的就只需要考虑是否猜对的情况。
+
+编写测试时，要充分利用测试框架的特性。由于我们使用了xUnit，测试用例无非是多种数据组合，反应多种结果的不同。因此可以使用`[Theory]`来编写测试。因此，测试方法就应该为：
+
+```cs
+        [Theory]
+        [MemberData(nameof(GuessRounds))]
+        public void Should_guess_numbers(Answer answer, string guessResult)
+        {
+
+        }
+
+        public static IEnumerable<object[]> GuessRounds()
+        {
+            yield return new object[] {Answer.Of(1, 5, 6, 7), "1A0B"};
+        }
+```
+
+接下来就可以从调用者角度驱动出`Round`的接口：
+
+```cs
+        [Theory]
+        [MemberData(nameof(GuessRounds))]
+        public void Should_guess_numbers(Answer answer, string expectedResult)
+        {
+            var actualAnswer = Answer.Of(1, 2, 3, 4);
+            var round = new Round(actualAnswer);
+
+            var actualResult = round.Guess(answer);
+
+            Assert.Equal(expectedResult, actualResult);
+        }
+```
+
+注意，游戏实际的答案应该作为构造函数参数传入给`Round`，而每次猜测的答案则通过方法参数传入。注意两者的区别。
+
+在实现`Guess()`方法时，我们希望比较输入的答案与实际的答案是否匹配。这个逻辑应该放在哪儿？
+
+显然，根据信息专家模式，只有Answer才具备比较的知识，应该将匹配的逻辑分配给`Answer`。

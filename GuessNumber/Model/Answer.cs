@@ -71,5 +71,32 @@ namespace GuessNumber.Model
                 throw new InvalidAnswerException("The number must be between 0 to 9.");
             }
         }
+
+        public string Matches(Answer inputAnswer)
+        {
+            var allRight = 0;
+            var valueRight = 0;
+            foreach (var actualNumber in Numbers)
+            {
+                var outerIndex = Numbers.IndexOf(actualNumber);
+
+                foreach (var inputNumber in inputAnswer.Numbers)
+                {
+                    var innerIndex = inputAnswer.Numbers.IndexOf(inputNumber);
+                    if (inputNumber == actualNumber && outerIndex == innerIndex)
+                    {
+                        allRight++;
+                        continue;
+                    }
+
+                    if (inputNumber == actualNumber)
+                    {
+                        valueRight++;
+                    }
+                }
+            }
+
+            return $"{allRight}A{valueRight}B";
+        }
     }
 }
