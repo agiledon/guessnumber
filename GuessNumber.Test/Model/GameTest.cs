@@ -9,6 +9,45 @@ namespace GuessNumber.Test.Model
         [Fact]
         public void Should_lose_if_all_3_times_are_wrong()
         {
+            var game = CreateGame();
+
+            var result = game.Guess(Answer.Of(1, 5, 6, 7));
+            Assert.Equal(GameResult.TBD, result.GameResult);
+
+            result = game.Guess(Answer.Of(2, 4, 7, 8));
+            Assert.Equal(GameResult.TBD, result.GameResult);
+
+            result = game.Guess(Answer.Of(0, 3, 2, 4));
+            Assert.Equal(GameResult.Lose, result.GameResult);
+        }
+
+        [Fact]
+        public void Should_win_if_first_time_is_right()
+        {
+            var game = CreateGame();
+
+            var result = game.Guess(Answer.Of(1, 2, 3, 4));
+
+            Assert.Equal(GameResult.Win, result.GameResult);
+        }
+
+        [Fact]
+        public void Should_win_if_last_time_is_right()
+        {
+            var game = CreateGame();
+
+            var result = game.Guess(Answer.Of(1, 5, 6, 7));
+            Assert.Equal(GameResult.TBD, result.GameResult);
+
+            result = game.Guess(Answer.Of(2, 4, 7, 8));
+            Assert.Equal(GameResult.TBD, result.GameResult);
+
+            result = game.Guess(Answer.Of(1, 2, 3, 4));
+            Assert.Equal(GameResult.Win, result.GameResult);
+        }
+
+        private static Game CreateGame()
+        {
             var mockRandom = new Mock<IRandomIntNumber>();
             mockRandom.SetupSequence(r => r.Next())
                 .Returns(1)
@@ -19,15 +58,7 @@ namespace GuessNumber.Test.Model
             const int roundAmount = 3;
 
             var game = new Game(roundAmount, answerGenerator);
-
-            var result = game.Guess(Answer.Of(1, 5, 6, 7));
-            Assert.Equal(GameResult.TBD, result.GameResult);
-
-            result = game.Guess(Answer.Of(2, 4, 7, 8));
-            Assert.Equal(GameResult.TBD, result.GameResult);
-
-            result = game.Guess(Answer.Of(0, 3, 2, 4));
-            Assert.Equal(GameResult.Lose, result.GameResult);
-        } 
+            return game;
+        }
     }
 }

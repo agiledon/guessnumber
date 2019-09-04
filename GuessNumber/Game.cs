@@ -26,17 +26,16 @@ namespace GuessNumber
             if (Win(result))
             {
                 _guessResult.GameResult = GameResult.Win;
+                return _guessResult;
             }
 
             if (Lose(result))
             {
                 _guessResult.GameResult = GameResult.Lose;
-            }
-            else
-            {
-                _guessResult.GameResult = GameResult.TBD;
+                return _guessResult;
             }
 
+            _guessResult.GameResult = GameResult.TBD;
             return _guessResult;
         }
 
