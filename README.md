@@ -14,3 +14,5 @@
 1 2         |    输入不正确，重新输入 
 
 答案在游戏开始时随机生成。输入只有6次机会，在每次猜测时，程序应给出当前猜测的结果，以及之前所有猜测的数字和结果以供玩家参考。输入界面为控制台（Console），以避免太多与问题无关的界面代码。输入时，用空格分隔数字。
+
+**说明：**演练过程请阅读[doc/Tasking.md](https://github.com/agiledon/guessnumber/blob/master/doc/Tasking.md)文档。
