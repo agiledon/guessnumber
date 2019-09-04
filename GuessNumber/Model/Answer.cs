@@ -78,18 +78,15 @@ namespace GuessNumber.Model
             var valueRight = 0;
             foreach (var actualNumber in Numbers)
             {
-                var outerIndex = Numbers.IndexOf(actualNumber);
-
                 foreach (var inputNumber in inputAnswer.Numbers)
                 {
-                    var innerIndex = inputAnswer.Numbers.IndexOf(inputNumber);
-                    if (inputNumber == actualNumber && outerIndex == innerIndex)
+                    if (SameValue(inputNumber, actualNumber) && SamePosition(inputAnswer, actualNumber, inputNumber))
                     {
                         allRight++;
                         continue;
                     }
 
-                    if (inputNumber == actualNumber)
+                    if (SameValue(inputNumber, actualNumber))
                     {
                         valueRight++;
                     }
@@ -97,6 +94,16 @@ namespace GuessNumber.Model
             }
 
             return $"{allRight}A{valueRight}B";
+        }
+
+        private static bool SameValue(int inputNumber, int actualNumber)
+        {
+            return inputNumber == actualNumber;
+        }
+
+        private bool SamePosition(Answer inputAnswer, int actualNumber, int inputNumber)
+        {
+            return Numbers.IndexOf(actualNumber) == inputAnswer.Numbers.IndexOf(inputNumber);
         }
     }
 }

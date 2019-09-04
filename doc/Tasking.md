@@ -207,3 +207,69 @@ TDD的过程中，要记得随时重构。
 在实现`Guess()`方法时，我们希望比较输入的答案与实际的答案是否匹配。这个逻辑应该放在哪儿？
 
 显然，根据信息专家模式，只有Answer才具备比较的知识，应该将匹配的逻辑分配给`Answer`。
+
+在实现了`Answer`的`Guess()`方法后，要及时对代码进行重构：
+
+```cs
+        public string Matches(Answer inputAnswer)
+        {
+            var allRight = 0;
+            var valueRight = 0;
+            foreach (var actualNumber in Numbers)
+            {
+                var outerIndex = Numbers.IndexOf(actualNumber);
+
+                foreach (var inputNumber in inputAnswer.Numbers)
+                {
+                    var innerIndex = inputAnswer.Numbers.IndexOf(inputNumber);
+                    if (inputNumber == actualNumber && outerIndex == innerIndex)
+                    {
+                        allRight++;
+                        continue;
+                    }
+
+                    if (inputNumber == actualNumber)
+                    {
+                        valueRight++;
+                    }
+                }
+            }
+
+            return $"{allRight}A{valueRight}B";
+        }
+    }
+```
+
+虽然不是太糟糕，太对比位置和值的逻辑还是不太清楚。重构后：
+
+```cs
+        public string Matches(Answer inputAnswer)
+        {
+            var allRight = 0;
+            var valueRight = 0;
+            foreach (var actualNumber in Numbers)
+            {
+                foreach (var inputNumber in inputAnswer.Numbers)
+                {
+                    if (SameValue(inputNumber, actualNumber) && SamePosition(inputAnswer, actualNumber, inputNumber))
+                    {
+                        allRight++;
+                        continue;
+                    }
+
+                    if (SameValue(inputNumber, actualNumber))
+                    {
+                        valueRight++;
+                    }
+                }
+            }
+
+            return $"{allRight}A{valueRight}B";
+        }
+```
+
+虽然`SameValue()`方法的代码很简单，但提取出来，一方面确保二者的抽象层次，另一方面也是希望体现游戏中要求相同值和相同位置的语义。
+
+对于for循环内部的每个分支，就无需再提取方法了。过犹不及，表达直观的意思就足够了。
+
+注意：每次重构之前和之后都要确保测试是通过的。
