@@ -1,7 +1,16 @@
-﻿namespace GuessNumber.Model
+﻿using System.Collections.Generic;
+
+namespace GuessNumber.Model
 {
-    public enum GameResult
+    public class GameResult
     {
-        TBD, Lose, Win
+        public string GuessResult { get; set; }
+        public GameStatus Status { get; set; }
+        public IList<Guess> GuessHistory { get; } = new List<Guess>();
+        
+        public void AddGuessHistory(Guess guess)
+        {
+            GuessHistory.Add(guess);
+        }
     }
 }

@@ -15,17 +15,17 @@ namespace GuessNumber.Test.Model
             var inputAnswer1 = Answer.Of(1, 5, 6, 7);
             var result = _game.Guess(inputAnswer1);
             var history = new List<Guess>();
-            AssertGuessResult(result, "1A0B", GameResult.TBD, history);
+            AssertGuessResult(result, "1A0B", GameStatus.Continue, history);
 
             var inputAnswer2 = Answer.Of(2, 4, 7, 8);
             result = _game.Guess(inputAnswer2);
             history.Add(new Guess(inputAnswer1, "1A0B"));
-            AssertGuessResult(result, "0A2B", GameResult.TBD, history);
+            AssertGuessResult(result, "0A2B", GameStatus.Continue, history);
 
             var inputAnswer3 = Answer.Of(0, 3, 2, 4);
             result = _game.Guess(inputAnswer3);
             history.Add(new Guess(inputAnswer2, "0A2B"));
-            AssertGuessResult(result, "1A2B", GameResult.Lose, history);
+            AssertGuessResult(result, "1A2B", GameStatus.Lose, history);
         }
 
         [Fact]
@@ -33,7 +33,7 @@ namespace GuessNumber.Test.Model
         {
             var result = _game.Guess(Answer.Of(1, 2, 3, 4));
 
-            AssertGuessResult(result, "4A0B", GameResult.Win, new List<Guess>());
+            AssertGuessResult(result, "4A0B", GameStatus.Win, new List<Guess>());
         }
 
         [Fact]
@@ -42,24 +42,24 @@ namespace GuessNumber.Test.Model
             var inputAnswer1 = Answer.Of(1, 5, 6, 7);
             var result = _game.Guess(inputAnswer1);
             var history = new List<Guess>();
-            AssertGuessResult(result, "1A0B", GameResult.TBD, history);
+            AssertGuessResult(result, "1A0B", GameStatus.Continue, history);
 
             var inputAnswer2 = Answer.Of(2, 4, 7, 8);
             result = _game.Guess(inputAnswer2);
             history.Add(new Guess(inputAnswer1, "1A0B"));
-            AssertGuessResult(result, "0A2B", GameResult.TBD, history);
+            AssertGuessResult(result, "0A2B", GameStatus.Continue, history);
 
             var inputAnswer3 = Answer.Of(1, 2, 3, 4);
             result = _game.Guess(inputAnswer3);
             history.Add(new Guess(inputAnswer2, "0A2B"));
-            AssertGuessResult(result, "4A0B", GameResult.Win, history);
+            AssertGuessResult(result, "4A0B", GameStatus.Win, history);
         }
 
-        private static void AssertGuessResult(GuessResult result, string currentResult, GameResult gameResult,
+        private static void AssertGuessResult(GameResult result, string currentResult, GameStatus gameStatus,
             List<Guess> history)
         {
-            Assert.Equal(currentResult, result.CurrentResult);
-            Assert.Equal(gameResult, result.GameResult);
+            Assert.Equal(currentResult, result.GuessResult);
+            Assert.Equal(gameStatus, result.Status);
             Assert.Equal(history, result.GuessHistory);
         }
 

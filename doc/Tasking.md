@@ -325,3 +325,34 @@ TDD的过程中，要记得随时重构。
 要表达这一概念，就必须定义类来封装。于是引入了`Guess`概念。另外，注意需求要求历史记录仅记录之前的猜测信息，并不包含本次猜测的结果。
 
 对`GuessResult`的验证存在重复代码，可以对测试进行重构。
+
+---
+
+`GuessResult`这个领域模型的名称不能更好地体现为游戏的结果，相反，更像是每局猜测的结果。因此将其更名为`GameResult`。同时，`GameStatus`的`TBD`值也不符合业务含义，将其更名为`Continue`：
+
+```cs
+namespace GuessNumber.Model
+{
+    public class GameResult
+    {
+        public string GuessResult { get; set; }
+        public GameStatus Status { get; set; }
+        public IList<Guess> GuessHistory { get; } = new List<Guess>();
+        
+        public void AddGuessHistory(Guess guess)
+        {
+            GuessHistory.Add(guess);
+        }
+    }
+}
+
+namespace GuessNumber.Model
+{
+    public enum GameStatus
+    {
+        Continue, Lose, Win
+    }
+}
+```
+
+`Round`的`guess()`方法返回的才是guess result，只是没有必要定义对象罢了。
